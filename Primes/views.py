@@ -46,6 +46,7 @@ class AsyncResult(threading.Thread):
             if not self.is_ready():
                 self.status = 'processing'
                 answer = json.dumps({'status': self.status}, separators=(',', ':'))
+                self.join()
             else:
                 answer = json.dumps({'value': self.result, 'status': self.status}, separators=(',', ':'))
         else:
