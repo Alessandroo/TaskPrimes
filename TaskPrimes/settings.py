@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'TaskPrimes.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Primes',
-        'USER': 'Alex',
-        'PASSWORD': 'BELARUSa_2',
+        'NAME': 'имя БД',
+        'USER': 'имя пользователя',
+        'PASSWORD': 'пароль пользователя',
         'HOST': '',
         'PORT': '',
     }
