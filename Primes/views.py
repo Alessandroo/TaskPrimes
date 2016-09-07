@@ -63,7 +63,7 @@ def get_primes(number):
         answer.append(number)
     return answer
 
-def browser(request):
+def browser(request, value):
     numbers = int(value)
     try:
         inf = Primes.objects.get(number=numbers)
