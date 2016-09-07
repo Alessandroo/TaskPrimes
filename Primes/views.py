@@ -64,7 +64,7 @@ def get_primes(number):
     return answer
 
 def browser(request):
-    numbers = int(m.group('value'))
+    numbers = int(value)
     try:
         inf = Primes.objects.get(number=numbers)
     except Primes.DoesNotExist:
