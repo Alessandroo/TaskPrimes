@@ -28,7 +28,6 @@ class AsyncResult(threading.Thread):
         self.status = None
 
     def run(self):
-        print('Я в run')
         try:
             self.result = self.func(*self.args)
             self.status = 'success'
@@ -38,12 +37,9 @@ class AsyncResult(threading.Thread):
             self.result = []
             self.status = 'error'
 
-    def is_ready(self):
-        return not self.isAlive()
-
     def get_value(self):
         if self.status != 'error':
-            if not self.is_ready():
+            if self.is_alive():
                 self.status = 'processing'
                 answer = json.dumps({'status': self.status}, separators=(',', ':'))
                 self.join()
@@ -67,29 +63,17 @@ def get_primes(number):
         answer.append(number)
     return answer
 
-
-def index(request):
-    return render_to_response('index.html', {})
-
-
 def browser(request):
-    print('I here')
-    ua = request.get_full_path(force_append_slash=True)
-    url_pattern = '/get_prime/(?P<value>[0-9]+)/'
-    m = re.match(url_pattern, ua)
-    if m is not None:
-        numbers = int(m.group('value'))
-        try:
-            inf = Primes.objects.get(number=numbers)
-        except Primes.DoesNotExist:
-            inf = None
-        if inf is not None:
-            answer = json.dumps({'value': inf.primes, 'status': 'success'}, separators=(',', ':'))
-            return HttpResponse(answer)
-        else:
-            b = AsyncResult(get_primes, (numbers,))
-            b.setDaemon(True)
-            b.start()
-            return b.get_value()
+    numbers = int(m.group('value'))
+    try:
+        inf = Primes.objects.get(number=numbers)
+    except Primes.DoesNotExist:
+        inf = None
+    if inf is not None:
+        answer = json.dumps({'value': inf.primes, 'status': 'success'}, separators=(',', ':'))
+        return HttpResponse(answer)
     else:
-        return render_to_response('index.html')
+        b = AsyncResult(get_primes, (numbers,))
+        b.setDaemon(True)
+        b.start()
+        return b.get_value()
